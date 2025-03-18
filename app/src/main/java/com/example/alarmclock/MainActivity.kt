@@ -65,15 +65,18 @@ fun getFormattedTime(): String {
 @Composable
 fun AlarmScreen(title: String, modifier: Modifier = Modifier)
 {
-
+    val context = LocalContext.current
+    var selectedTime by remember { mutableStateOf(Calendar.getInstance()) } // Store Calendar instance
     Column(modifier = Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Text("Alarm Clock", style = MaterialTheme.typography.headlineLarge)
-        val currentTime = remember { mutableStateOf(getFormattedTime())
         Text(
-            text ="Current Time: ${currentTime.value}",
-            style = MaterialTheme.typography.headlineMedium
+            text = "${selectedTime.get(Calendar.HOUR_OF_DAY)}:${selectedTime.get(Calendar.MINUTE)}",
+            style = MaterialTheme.typography.headlineLarge
         )
-        Button(onClick = { },
+        Button(onClick = {
+            showTimePicker(context, selectedTime) { updatedCalendar ->
+                selectedTime = updatedCalendar // Update selected time
+            } },
             colors = ButtonDefaults.buttonColors(
                 containerColor = ButtonColors.ContainerColor,
                 contentColor = ButtonColors.ContentColor
@@ -138,7 +141,7 @@ fun showTimePicker(context: Context, currentTime: Calendar, onTimeSelected: (Cal
         },
         hour,
         minute,
-        true // true = 24-hour format, false = 12-hour format
+        false // true = 24-hour format, false = 12-hour format
     ).show()
 }
 
